@@ -1,10 +1,17 @@
 Rail Fence Cipher
 =================
 
+
 Type
 ----
 
 **Crypto**
+
+
+Points
+------
+
+**50**
 
 
 Problem
@@ -80,6 +87,6 @@ Then reads off to get the cipher-text:
 Algorithm implementation
 ------------------------
 
-You can find an implementation of the ``Rail Fence cipher`` here:
+You can find a Python implementation of the ``Rail Fence cipher`` here:
 
 .. include:: ./src/rail-fence-cipher
