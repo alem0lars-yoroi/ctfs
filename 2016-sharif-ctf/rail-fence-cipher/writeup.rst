@@ -4,9 +4,8 @@ Writeup: SharifCTF 2016 - Rail Fence Cipher
 :date: 2016-02-07
 :tags: security, ctf, sharifctf, crypto
 :lang: en
-:summary: Rail Fence Cipher is a crypto challenge where you have to get
-          the plain-text from a given cipher-text using the Rail Fence
-          cipher.
+:summary: A crypto challenge where you have to get the plain-text from a given
+          cipher-text using the *Rail Fence cipher*.
 
 
 Points
@@ -18,23 +17,14 @@ Points
 Problem
 -------
 
-.. code-block:: text
+Decrypt and find the flag:
 
-  Decrypt and find the flag
-
-`Ciphertext`_
-
-.. _`Ciphertext`: ./data/Ciphertext
+.. include:: ./data/ciphertext
+   :code: text
 
 
 Solution
 --------
-
-We had to decrypt the following cipher-text:
-
-.. code-block:: text
-
-  AaY--rpyfneJBeaaX0n-,ZZcs-uXeeSVJ-sh2tioaZ}slrg,-ciE-anfGt.-eCIyss-TzprttFliora{GcouhQIadctm0ltt-FYluuezTyorZ-
 
 The challenge name is *Rail Fence Cipher*, which gave me the insight that
 `rail fence` algorithm may be used to generate the cipher-text.
@@ -49,13 +39,13 @@ following plain-text:
 
 .. code-block:: text
 
-  A-fence-is-a-structure-that-encloses-an-area,-SharifCTF{QmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJt},-typically-outdoors.
+   A-fence-is-a-structure-that-encloses-an-area,-SharifCTF{QmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJt},-typically-outdoors.
 
 The flag is the string enclosed between ``SharifCTF{`` and ``}``:
 
 .. code-block:: text
 
-  QmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJt
+   QmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJt
 
 
 Theory behind
@@ -72,15 +62,15 @@ For example, if we have ``3`` *rails* and a message of
 
 .. code-block:: text
 
-  W . . . E . . . C . . . R . . . L . . . T . . . E
-  . E . R . D . S . O . E . E . F . E . A . O . C .
-  . . A . . . I . . . V . . . D . . . E . . . N . .
+   W . . . E . . . C . . . R . . . L . . . T . . . E
+   . E . R . D . S . O . E . E . F . E . A . O . C .
+   . . A . . . I . . . V . . . D . . . E . . . N . .
 
 Then reads off to get the cipher-text:
 
 .. code-block:: text
 
-  WECRL TEERD SOEEF EAOCA IVDEN
+   WECRL TEERD SOEEF EAOCA IVDEN
 
 *Excerpt from wikipedia*
 
@@ -91,3 +81,5 @@ Algorithm implementation
 You can find a Python implementation of the ``Rail Fence cipher`` here:
 
 .. include:: ./src/rail-fence-cipher
+   :code: python
+   :class: highlight
