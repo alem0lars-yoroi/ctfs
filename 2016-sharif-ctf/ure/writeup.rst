@@ -1,11 +1,14 @@
 Writeup: SharifCTF 2016 - URE
 =============================
 
-:date: 2016-02-07
+:date: 2016-02-08
 :tags: security, ctf, sharifctf, crypto
 :category: CTF Writeups
 :lang: en
-:summary: TODO
+:summary: A challenge for the cryptosystem
+          *Universal Re-Encryption based on ElGamal*,
+          where I had to create a cipher-text from another
+          cipher-text.
 
 
 Points
