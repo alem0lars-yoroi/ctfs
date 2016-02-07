@@ -3,8 +3,9 @@ Writeup: EFF-CTF 2016 - Level 0x1
 
 :date: 2016-02-04
 :tags: security, ctf, eff-ctf, web
+:category: CTF Writeups
 :lang: en
-:summary: Level 0x1 is a web challenge, where you need to exploit a
+:summary: A web challenge, where you need to exploit a
           (non-blind) SQLi in order to get the flag.
 
 

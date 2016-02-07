@@ -3,6 +3,7 @@ Writeup: SharifCTF 2016 - Rail Fence Cipher
 
 :date: 2016-02-07
 :tags: security, ctf, sharifctf, crypto
+:category: CTF Writeups
 :lang: en
 :summary: A crypto challenge where you have to get the plain-text from a given
           cipher-text using the *Rail Fence cipher*.
@@ -19,8 +20,35 @@ Problem
 
 Decrypt and find the flag:
 
-.. include:: ./data/ciphertext
+.. include:: ./data/ciphertext.txt
    :code: text
+
+
+Theory
+------
+
+In the rail fence cipher, the plain-text is written downwards and diagonally
+on successive *rails* of an imaginary fence, then moving up when we reach the
+bottom rail. When we reach the top rail, the message is written downwards again
+until the whole plain-text is written out.
+The message is then read off in rows.
+
+For example, if we have ``3`` *rails* and a message of
+*WE ARE DISCOVERED. FLEE AT ONCE*, the cipherer writes out:
+
+.. code-block:: text
+
+   W . . . E . . . C . . . R . . . L . . . T . . . E
+   . E . R . D . S . O . E . E . F . E . A . O . C .
+   . . A . . . I . . . V . . . D . . . E . . . N . .
+
+Then reads off to get the cipher-text:
+
+.. code-block:: text
+
+   WECRL TEERD SOEEF EAOCA IVDEN
+
+*Excerpt from wikipedia*
 
 
 Solution
@@ -46,33 +74,6 @@ The flag is the string enclosed between ``SharifCTF{`` and ``}``:
 .. code-block:: text
 
    QmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJt
-
-
-Theory behind
--------------
-
-In the rail fence cipher, the plain-text is written downwards and diagonally
-on successive *rails* of an imaginary fence, then moving up when we reach the
-bottom rail. When we reach the top rail, the message is written downwards again
-until the whole plain-text is written out.
-The message is then read off in rows.
-
-For example, if we have ``3`` *rails* and a message of
-*WE ARE DISCOVERED. FLEE AT ONCE*, the cipherer writes out:
-
-.. code-block:: text
-
-   W . . . E . . . C . . . R . . . L . . . T . . . E
-   . E . R . D . S . O . E . E . F . E . A . O . C .
-   . . A . . . I . . . V . . . D . . . E . . . N . .
-
-Then reads off to get the cipher-text:
-
-.. code-block:: text
-
-   WECRL TEERD SOEEF EAOCA IVDEN
-
-*Excerpt from wikipedia*
 
 
 Algorithm implementation

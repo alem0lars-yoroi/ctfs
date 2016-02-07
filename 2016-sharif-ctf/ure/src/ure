@@ -1,0 +1,104 @@
+#!/usr/bin/python
+
+
+import os, re
+
+
+# Colors functions.
+BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
+def colorize(text, color): return "\x1b[1;%dm" % (30 + color) + text + "\x1b[0m"
+def print_colored(text, color=WHITE): print(colorize(text, color))
+
+
+class UREEGR(object):
+    def __init__(self, r0, r1):
+        self._r0 = r0
+        self._r1 = r1
+
+    @property
+    def r0(self): return self._r0
+
+    @property
+    def r1(self): return self._r1
+
+class UREEGCipherText(object):
+    def __init__(self, a, b, c, d, p):
+        self.p = p
+        self.a = a
+        self.b = b
+        self.c = c
+        self.d = d
+
+    @property
+    def a(self): return self._a
+    @a.setter
+    def a(self, value): self._a = value % self.p
+
+    @property
+    def b(self): return self._b
+    @b.setter
+    def b(self, value): self._b = value % self.p
+
+    @property
+    def c(self): return self._c
+    @c.setter
+    def c(self, value): self._c = value % self.p
+
+    @property
+    def d(self): return self._d
+    @d.setter
+    def d(self, value): self._d = value % self.p
+
+    @property
+    def p(self): return self._p
+    @p.setter
+    def p(self, value): self._p = value
+
+class UREEGReEncryptor(object):
+    def __init__(self, ciphertext, r):
+        self._ciphertext = ciphertext
+        self._r          = r
+
+    def reencrypt(self):
+        return UREEGCipherText(pow(self._ciphertext.a, self._r.r0),
+                               pow(self._ciphertext.b, self._r.r0),
+                               pow(self._ciphertext.c * self._ciphertext.a,
+                                   self._r.r1),
+                               pow(self._ciphertext.d * self._ciphertext.b,
+                                   self._r.r1),
+                               self._ciphertext.p)
+
+
+def testureeg():
+    # Expected values.
+    expected_a = 3287406693040037454338117703746186185132137914785835752950604845777415758360615360784432898128185782894436154048036406523549199332371675403330587908658389
+    expected_b = 3106361558536896198315490627917020257039985078045091925325167930756012775219021778274538316287957153184501076513389822529518252243096913454042609623430979
+    expected_c = 2705749471178411581710759303917406711797848509917528975018497036876024862091214580659339932929912633743841281275200381261759865873903109533343463983599973
+    expected_d = 5373483039142295785146805049046423326555571326092245347871091138664843112902523040473342171017639501524961161720758693343930112103298610080325764680063048
+    # Parse the input file `ciphertext.txt`.
+    ciphertext_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                                   'data', 'ciphertext.txt')
+    pattern = lambda var: re.compile('^{var}\\s*=\\s*0x(.+)$'.format(var=var))
+    variables = {'a': None, 'b': None, 'c': None, 'd': None, 'p': None}
+    with open(ciphertext_path) as f:
+        lines = filter(None, f.read().splitlines())
+        for line in lines:
+            for name in variables.keys():
+                mda = pattern(name).match(line)
+                if mda:
+                    variables[name] = int(mda.group(1), 16)
+    # Build data structures.
+    ciphertext = UREEGCipherText(variables['a'], variables['b'], variables['c'],
+                                 variables['d'], variables['p'])
+    r = UREEGR(2, 1)
+    reencryptor = UREEGReEncryptor(ciphertext, r)
+    # ReEncrypt.
+    # TODO: Check computed are equal to expected.
+
+
+if __name__ == '__main__':
+    testureeg()
+    # TODO: Parse arguments.
+
+
+# vim: set filetype=python :
