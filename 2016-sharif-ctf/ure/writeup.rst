@@ -1,11 +1,10 @@
-URE
-===
+Writeup: SharifCTF 2016 - URE
+=============================
 
-
-Type
-----
-
-**Crypto**
+:status: draft
+:tags: security, ctf, sharifctf, crypto
+:lang: en
+:summary: TODO
 
 
 Points

@@ -1,11 +1,12 @@
-Rail Fence Cipher
-=================
+Writeup: SharifCTF 2016 - Rail Fence Cipher
+===========================================
 
-
-Type
-----
-
-**Crypto**
+:date: 2016-02-07
+:tags: security, ctf, sharifctf, crypto
+:lang: en
+:summary: Rail Fence Cipher is a crypto challenge where you have to get
+          the plain-text from a given cipher-text using the Rail Fence
+          cipher.
 
 
 Points
