@@ -18,7 +18,7 @@ Points
 Problem
 -------
 
-.. code-block::
+.. code-block:: text
 
   Decrypt and find the flag
 
@@ -32,7 +32,7 @@ Solution
 
 We had to decrypt the following cipher-text:
 
-.. code-block::
+.. code-block:: text
 
   AaY--rpyfneJBeaaX0n-,ZZcs-uXeeSVJ-sh2tioaZ}slrg,-ciE-anfGt.-eCIyss-TzprttFliora{GcouhQIadctm0ltt-FYluuezTyorZ-
 
@@ -47,13 +47,13 @@ The next step is to try to decode the cipher-text for some rail sizes.
 The correct rail size is: ``21`` (with offset: ``0``), which gives the
 following plain-text:
 
-.. code-block::
+.. code-block:: text
 
   A-fence-is-a-structure-that-encloses-an-area,-SharifCTF{QmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJt},-typically-outdoors.
 
 The flag is the string enclosed between ``SharifCTF{`` and ``}``:
 
-.. code-block::
+.. code-block:: text
 
   QmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJt
 
@@ -70,7 +70,7 @@ The message is then read off in rows.
 For example, if we have ``3`` *rails* and a message of
 *WE ARE DISCOVERED. FLEE AT ONCE*, the cipherer writes out:
 
-.. code-block::
+.. code-block:: text
 
   W . . . E . . . C . . . R . . . L . . . T . . . E
   . E . R . D . S . O . E . E . F . E . A . O . C .
@@ -78,7 +78,7 @@ For example, if we have ``3`` *rails* and a message of
 
 Then reads off to get the cipher-text:
 
-.. code-block::
+.. code-block:: text
 
   WECRL TEERD SOEEF EAOCA IVDEN
 
