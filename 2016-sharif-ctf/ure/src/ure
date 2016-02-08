@@ -1,14 +1,14 @@
 #!/usr/bin/python
-
+# ------------------------------------------------------------------------------
+# IMPORTS ----------------------------------------------------------------------
 
 import os, re
+from shared.output import *
+from shared.files  import *
+from shared.main   import *
 
-
-# Colors functions.
-BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
-def colorize(text, color): return "\x1b[1;%dm" % (30 + color) + text + "\x1b[0m"
-def print_colored(text, color=WHITE): print(colorize(text, color))
-
+# ------------------------------------------------------------------------------
+# MODULE INFORMATIONS ----------------------------------------------------------
 
 class UREEGR(object):
     def __init__(self, r0, r1):
@@ -28,6 +28,19 @@ class UREEGCipherText(object):
         self.b = b
         self.c = c
         self.d = d
+
+    @classmethod
+    def fromfile(cls, filename, p=None):
+        path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                            'data', filename)
+        args = parsefromregexp(
+            path,
+            ['a', 'b', 'c', 'd', 'p'],
+            lambda name: re.compile('^{}\\s*=\\s*0x(.+)$'.format(name)),
+            lambda md: int(md.group(1), 16))
+        if not p is None and not 'p' in args:
+            args['p'] = p
+        return cls(args['a'], args['b'], args['c'], args['d'], args['p'])
 
     @property
     def a(self): return self._a
@@ -64,10 +77,30 @@ class UREEGCipherText(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def dump(self):
+        info = [('a', self.a), ('b', self.b), ('c', self.c), ('d', self.d),
+                ('p', self.p)]
+        out = ''
+        for name, value in info:
+            out += '{}={}\n'.format(colorize(name, WHITE),
+                                    colorize(hex(value), CYAN))
+        return out
+
 class UREEGReEncryptor(object):
     def __init__(self, ciphertext, r):
         self._ciphertext = ciphertext
-        self._r          = r
+        self._r = r
+
+    @classmethod
+    def encryptfromargs(cls, args):
+        printtitle('Performing Re-Encryption')
+        # Encrypt from command line arguments.
+        ciphertext = UREEGCipherText(args.a, args.b, args.c, args.d, args.p)
+        r = UREEGR(args.r0, args.r1)
+        reencryptor = cls(ciphertext, r)
+        ciphertext = reencryptor.encrypt()
+        printsuccess('Generated the following ciphertext:\n{}'.format(
+            ciphertext.dump()))
 
     def encrypt(self):
         return UREEGCipherText(pow(self._ciphertext.a, self._r.r0),
@@ -78,42 +111,38 @@ class UREEGReEncryptor(object):
                                    self._r.r1),
                                self._ciphertext.p)
 
-def parsecipherfile(name, p=None):
-    ciphertext_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
-                                   'data', name)
-    pattern = lambda var: re.compile('^{var}\\s*=\\s*0x(.+)$'.format(var=var))
-    inputs = {'a': None, 'b': None, 'c': None, 'd': None, 'p': None}
-    if p is not None:
-        inputs['p'] = p
-    with open(ciphertext_path) as f:
-        lines = filter(None, f.read().splitlines())
-        for line in lines:
-            for name in inputs.keys():
-                mda = pattern(name).match(line)
-                if mda:
-                    inputs[name] = int(mda.group(1), 16)
-    return UREEGCipherText(inputs['a'], inputs['b'], inputs['c'], inputs['d'],
-                           inputs['p'])
-
 def test():
+    printtitle('Testing')
     # Build testing data structures.
-    origciphertext = parsecipherfile('ciphertext.txt')
-    expectedciphertext = parsecipherfile('solution.txt', p=origciphertext.p)
-    r = UREEGR(2, 1)
-    encryptor = UREEGReEncryptor(origciphertext, r)
-    # ReEncrypt.
-    ciphertext = encryptor.encrypt()
-    print(hex(ciphertext.a))
-    print(hex(ciphertext.b))
-    print(hex(ciphertext.c))
-    print(hex(ciphertext.d))
-    if ciphertext == expectedciphertext:
-        print('Valid')
+    original = UREEGCipherText.fromfile('ciphertext.txt')
+    expected = UREEGCipherText.fromfile('solution.txt', p=original.p)
+    computed = UREEGReEncryptor(original, UREEGR(2, 1)).encrypt()
+
+    printdebug('Expected ciphertext:\n{}'.format(expected.dump()))
+    printdebug('Computed ciphertext:\n{}'.format(computed.dump()))
+
+    if computed == expected:
+        printsuccess('The computed ciphertext is the same of the expected')
     else:
-        print('Invalid')
+        printsuccess('The computed ciphertext is NOT the same of the expected')
 
 
 if __name__ == '__main__':
-    print(test())
+    printtitle('Starting Universal Re-Encryption')
+    cmdmain('ure', 'Universal Re-Encryption based on ElGamal algorithm', {
+                'reencrypt': {
+                    'handler': UREEGReEncryptor.encryptfromargs,
+                    'args': [
+                        {'name': '--a',  'required': True, 'type': autoint},
+                        {'name': '--b',  'required': True, 'type': autoint},
+                        {'name': '--c',  'required': True, 'type': autoint},
+                        {'name': '--d',  'required': True, 'type': autoint},
+                        {'name': '--p',  'required': True, 'type': autoint},
+                        {'name': '--r0', 'required': True, 'type': autoint},
+                        {'name': '--r1', 'required': True, 'type': autoint},
+                    ],
+                },
+            }, testfn=test)
+
 
 # vim: set filetype=python :

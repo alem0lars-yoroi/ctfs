@@ -18,7 +18,7 @@ class RailFenceCipher(object):
             fence[rails[n % len(rails)]][n] = x
 
         if self._verbose:
-            printcolored('<<< Building rail fence..', MAGENTA)
+            fence_str = ''
             for rail in fence:
                 rail_data = []
                 for c in rail:
@@ -26,7 +26,8 @@ class RailFenceCipher(object):
                         rail_data.append(colorize('.', YELLOW))
                     else:
                         rail_data.append(colorize(str(c), BLUE))
-                print(''.join(rail_data))
+                fence_str += ''.join(rail_data) + '\n'
+            printdebug('Building rail fence..\n{}'.format(fence_str), indent=3)
 
         return [c for rail in fence for c in rail if c is not None]
 
@@ -38,8 +39,8 @@ class RailFenceEncoder(RailFenceCipher):
     def encode(self):
         ciphertext = ''.join(self._fence(self._plaintext))
         if self._verbose:
-            printcolored('<<< Encoded plaintext into: {ciphertext}'.format(
-                ciphertext=colorize(ciphertext, CYAN)), GREEN)
+            printsuccess('Encoded plaintext into: {ciphertext}'.format(
+                ciphertext=colorize(ciphertext, CYAN)), indent=3)
         return ciphertext
 
 class RailFenceDecoder(RailFenceCipher):
@@ -52,8 +53,8 @@ class RailFenceDecoder(RailFenceCipher):
         positions = self._fence(rng)
         plaintext = ''.join(self._ciphertext[positions.index(n)] for n in rng)
         if self._verbose:
-            printcolored('<<< Decoded ciphertext into: {plaintext}'.format(
-                plaintext=colorize(plaintext, CYAN)), GREEN)
+            printsuccess('Decoded ciphertext into: {plaintext}'.format(
+                plaintext=colorize(plaintext, CYAN)), indent=3)
         return plaintext
 
 

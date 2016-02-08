@@ -216,4 +216,8 @@ You can find a Python implementation of the ``URE based on ElGamal`` here:
    :code: python
    :class: highlight
 
-If you want to run the script above, also need the following files:
+If you want to run the script above, you also need to download the
+`shared directory`_ (containing the stuff I share between every CTF) and place
+in the same directory of the script.
+
+.. _`shared directory`: https://github.com/alem0lars/ctfs/tree/master/shared

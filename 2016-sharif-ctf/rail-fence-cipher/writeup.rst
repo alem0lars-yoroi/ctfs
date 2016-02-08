@@ -84,3 +84,9 @@ You can find a Python implementation of the ``Rail Fence cipher`` here:
 .. include:: ./src/rail-fence-cipher
    :code: python
    :class: highlight
+
+If you want to run the script above, you also need to download the
+`shared directory`_ (containing the stuff I share between every CTF) and place
+in the same directory of the script.
+
+.. _`shared directory`: https://github.com/alem0lars/ctfs/tree/master/shared
