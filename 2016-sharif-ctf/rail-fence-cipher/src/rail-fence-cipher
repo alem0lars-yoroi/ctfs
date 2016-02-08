@@ -1,9 +1,12 @@
 #!/usr/bin/python
+# ------------------------------------------------------------------------------
+# IMPORTS ----------------------------------------------------------------------
 
+from shared.output import *
+from shared.main   import *
 
-import sys, ast, argparse
-from shared.colors import *
-
+# ------------------------------------------------------------------------------
+# ALGORITHMS -------------------------------------------------------------------
 
 class RailFenceCipher(object):
     def __init__(self, railsize, verbose=False):
@@ -57,6 +60,8 @@ class RailFenceDecoder(RailFenceCipher):
                 plaintext=colorize(plaintext, CYAN)), indent=3)
         return plaintext
 
+# ------------------------------------------------------------------------------
+# TEST FUNCTIONS ---------------------------------------------------------------
 
 def test(verbose):
     railsize = 21
@@ -79,6 +84,8 @@ def test(verbose):
     else:
         printcolored('<<< Encode failed: ciphertext != encoded', RED)
 
+# ------------------------------------------------------------------------------
+# ENTRY POINT ------------------------------------------------------------------
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='rail-fence-cipher',
@@ -128,4 +135,5 @@ if __name__ == '__main__':
             print(RailFenceDecoder(ciphertext, args.railsize,
                                    verbose=args.verbose))
 
+# ------------------------------------------------------------------------------
 # vim: set filetype=python :
