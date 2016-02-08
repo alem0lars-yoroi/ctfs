@@ -8,7 +8,7 @@ from shared.files  import *
 from shared.main   import *
 
 # ------------------------------------------------------------------------------
-# MODULE INFORMATIONS ----------------------------------------------------------
+# DATA STRUCTURES --------------------------------------------------------------
 
 class UREEGR(object):
     def __init__(self, r0, r1):
@@ -86,6 +86,9 @@ class UREEGCipherText(object):
                                     colorize(hex(value), CYAN))
         return out
 
+# ------------------------------------------------------------------------------
+# ALGORITHMS -------------------------------------------------------------------
+
 class UREEGReEncryptor(object):
     def __init__(self, ciphertext, r):
         self._ciphertext = ciphertext
@@ -111,8 +114,12 @@ class UREEGReEncryptor(object):
                                    self._r.r1),
                                self._ciphertext.p)
 
+# ------------------------------------------------------------------------------
+# TEST FUNCTIONS ---------------------------------------------------------------
+
 def test():
     printtitle('Testing')
+
     # Build testing data structures.
     original = UREEGCipherText.fromfile('ciphertext.txt')
     expected = UREEGCipherText.fromfile('solution.txt', p=original.p)
@@ -125,7 +132,10 @@ def test():
         printsuccess('The computed ciphertext is the same of the expected')
     else:
         printsuccess('The computed ciphertext is NOT the same of the expected')
+        return -1
 
+# ------------------------------------------------------------------------------
+# ENTRY POINT ------------------------------------------------------------------
 
 if __name__ == '__main__':
     printtitle('Starting Universal Re-Encryption')
@@ -144,5 +154,5 @@ if __name__ == '__main__':
                 },
             }, testfn=test)
 
-
+# ------------------------------------------------------------------------------
 # vim: set filetype=python :
