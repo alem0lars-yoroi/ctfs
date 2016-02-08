@@ -54,12 +54,22 @@ class UREEGCipherText(object):
     @p.setter
     def p(self, value): self._p = value
 
+    def __eq__(self, other):
+        return (isinstance(other, self.__class__)
+            and self.a == other.a
+            and self.b == other.b
+            and self.c == other.c
+            and self.d == other.d)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 class UREEGReEncryptor(object):
     def __init__(self, ciphertext, r):
         self._ciphertext = ciphertext
         self._r          = r
 
-    def reencrypt(self):
+    def encrypt(self):
         return UREEGCipherText(pow(self._ciphertext.a, self._r.r0),
                                pow(self._ciphertext.b, self._r.r0),
                                pow(self._ciphertext.c * self._ciphertext.a,
@@ -68,37 +78,42 @@ class UREEGReEncryptor(object):
                                    self._r.r1),
                                self._ciphertext.p)
 
-
-def testureeg():
-    # Expected values.
-    expected_a = 3287406693040037454338117703746186185132137914785835752950604845777415758360615360784432898128185782894436154048036406523549199332371675403330587908658389
-    expected_b = 3106361558536896198315490627917020257039985078045091925325167930756012775219021778274538316287957153184501076513389822529518252243096913454042609623430979
-    expected_c = 2705749471178411581710759303917406711797848509917528975018497036876024862091214580659339932929912633743841281275200381261759865873903109533343463983599973
-    expected_d = 5373483039142295785146805049046423326555571326092245347871091138664843112902523040473342171017639501524961161720758693343930112103298610080325764680063048
-    # Parse the input file `ciphertext.txt`.
+def parsecipherfile(name, p=None):
     ciphertext_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
-                                   'data', 'ciphertext.txt')
+                                   'data', name)
     pattern = lambda var: re.compile('^{var}\\s*=\\s*0x(.+)$'.format(var=var))
-    variables = {'a': None, 'b': None, 'c': None, 'd': None, 'p': None}
+    inputs = {'a': None, 'b': None, 'c': None, 'd': None, 'p': None}
+    if p is not None:
+        inputs['p'] = p
     with open(ciphertext_path) as f:
         lines = filter(None, f.read().splitlines())
         for line in lines:
-            for name in variables.keys():
+            for name in inputs.keys():
                 mda = pattern(name).match(line)
                 if mda:
-                    variables[name] = int(mda.group(1), 16)
-    # Build data structures.
-    ciphertext = UREEGCipherText(variables['a'], variables['b'], variables['c'],
-                                 variables['d'], variables['p'])
+                    inputs[name] = int(mda.group(1), 16)
+    return UREEGCipherText(inputs['a'], inputs['b'], inputs['c'], inputs['d'],
+                           inputs['p'])
+
+def test():
+    # Build testing data structures.
+    origciphertext = parsecipherfile('ciphertext.txt')
+    expectedciphertext = parsecipherfile('solution.txt', p=origciphertext.p)
     r = UREEGR(2, 1)
-    reencryptor = UREEGReEncryptor(ciphertext, r)
+    encryptor = UREEGReEncryptor(origciphertext, r)
     # ReEncrypt.
-    # TODO: Check computed are equal to expected.
+    ciphertext = encryptor.encrypt()
+    print(hex(ciphertext.a))
+    print(hex(ciphertext.b))
+    print(hex(ciphertext.c))
+    print(hex(ciphertext.d))
+    if ciphertext == expectedciphertext:
+        print('Valid')
+    else:
+        print('Invalid')
 
 
 if __name__ == '__main__':
-    testureeg()
-    # TODO: Parse arguments.
-
+    print(test())
 
 # vim: set filetype=python :

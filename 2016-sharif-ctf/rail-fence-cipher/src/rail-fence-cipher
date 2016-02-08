@@ -2,12 +2,7 @@
 
 
 import sys, ast, argparse
-
-
-# Colors functions.
-BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
-def colorize(text, color): return "\x1b[1;%dm" % (30 + color) + text + "\x1b[0m"
-def print_colored(text, color=WHITE): print(colorize(text, color))
+from shared.colors import *
 
 
 class RailFenceCipher(object):
@@ -23,7 +18,7 @@ class RailFenceCipher(object):
             fence[rails[n % len(rails)]][n] = x
 
         if self._verbose:
-            print_colored('<<< Building rail fence..', MAGENTA)
+            printcolored('<<< Building rail fence..', MAGENTA)
             for rail in fence:
                 rail_data = []
                 for c in rail:
@@ -43,7 +38,7 @@ class RailFenceEncoder(RailFenceCipher):
     def encode(self):
         ciphertext = ''.join(self._fence(self._plaintext))
         if self._verbose:
-            print_colored('<<< Encoded plaintext into: {ciphertext}'.format(
+            printcolored('<<< Encoded plaintext into: {ciphertext}'.format(
                 ciphertext=colorize(ciphertext, CYAN)), GREEN)
         return ciphertext
 
@@ -57,31 +52,31 @@ class RailFenceDecoder(RailFenceCipher):
         positions = self._fence(rng)
         plaintext = ''.join(self._ciphertext[positions.index(n)] for n in rng)
         if self._verbose:
-            print_colored('<<< Decoded ciphertext into: {plaintext}'.format(
+            printcolored('<<< Decoded ciphertext into: {plaintext}'.format(
                 plaintext=colorize(plaintext, CYAN)), GREEN)
         return plaintext
 
 
-def testfencecipher(verbose):
+def test(verbose):
     railsize = 21
     plaintext  = ('A-fence-is-a-structure-that-encloses-an-area,-SharifCTF'
                   '{QmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJt},-typically-outdoors.')
     ciphertext = ('AaY--rpyfneJBeaaX0n-,ZZcs-uXeeSVJ-sh2tioaZ}slrg,-ciE-an'
                   'fGt.-eCIyss-TzprttFliora{GcouhQIadctm0ltt-FYluuezTyorZ-')
 
-    print_colored('<< Testing Fence Cipher encode/decode functions..', BLUE)
+    printcolored('<< Testing Fence Cipher encode/decode functions..', BLUE)
 
     decoded = RailFenceDecoder(ciphertext, railsize, verbose=verbose).decode()
     if plaintext == decoded:
-        print_colored('<<< Decode success: plaintext == decoded', GREEN)
+        printcolored('<<< Decode success: plaintext == decoded', GREEN)
     else:
-        print_colored('<<< Decode failed: plaintext != decoded', RED)
+        printcolored('<<< Decode failed: plaintext != decoded', RED)
 
     encoded = RailFenceEncoder(plaintext, railsize, verbose=verbose).encode()
     if ciphertext == encoded:
-        print_colored('<<< Encode success: ciphertext == encoded', GREEN)
+        printcolored('<<< Encode success: ciphertext == encoded', GREEN)
     else:
-        print_colored('<<< Encode failed: ciphertext != encoded', RED)
+        printcolored('<<< Encode failed: ciphertext != encoded', RED)
 
 
 if __name__ == '__main__':
@@ -116,7 +111,7 @@ if __name__ == '__main__':
     # Parse arguments and call the right sub-command function.
     args = parser.parse_args(sys.argv[1:])
     if args.parsername == 'test':
-        testfencecipher(args.verbose)
+        test(args.verbose)
     elif args.parsername == 'encode':
         print('<<< Encoding plain-text(s)', BLUE)
         for plaintext in args.plaintext:

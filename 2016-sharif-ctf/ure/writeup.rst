@@ -100,7 +100,7 @@ URE based on ElGamal
 
 - **Initial important note**: if a number :math:`n` belongs to a group
   :math:`\mathbb{Z}_p^*` of prime order :math:`q` (i.e. the group is cyclic);
-  then **that number is *mod* :math:`p`**.
+  then that number is *mod* :math:`p`.
 
 Searching on the Internet, I've found the **ElGamal encryption system**.
 *The encryption and decryption functions seem to be really similar to the ones
@@ -189,29 +189,22 @@ I get the following generated cipher-text :math:`\sigma^\star`:
 
 .. math::
 
-   a^\star = 328740669304003745433811770374618618513213791478583575295060
+  a^\star = 0x3ec4825abd8821bbd0ccd9c9cd9711420ee623c59fc59dc3d015d8a9aa4a96ec\\
+              3f66341e849bd2eb88d1758975fd41126ce160b344247e838baf922ac5e454d5
 
-             484577741575836061536078443289812818578289443615404803640652
+  b^\star = 0x3b4f943a38409fa3511433d1262b530a863b050c0ff839e23df4d43b1d581c0f\\
+              8ce13b02714983ab6d346731cb632664f2e6471e2079b0d351f6b1503622f743
 
-             3549199332371675403330587908658389
+  c^\star = 0x33a96d8c2ae1ad1c850c0376158f6ded51254315fdf544f3f87f58cc36856c91\\
+              dac356f36cce3713f6041431d074174ca45dedab6dad93f1cbebc22c3ef8d165
 
-   b^\star = 310636155853689619831549062791702025703998507804509192532516
+  d^\star = 0x669909b8c984ed22532758c8b5444a7eb60947c4b9f1aec21763c2af91ee878b\\
+              a6ef55b8199a6a32f3b31336da6bfe870c20301f6f16b31079176b3947991848
 
-             793075601277521902177827453831628795715318450107651338982252
+If you submit that cipher-text,
+you'll get ``SharifCTF{3c421da845f2837cf690ad8fa610e29a}``.
 
-             9518252243096913454042609623430979
-
-   c^\star = 270574947117841158171075930391740671179784850991752897501849
-
-             703687602486209121458065933993292991263374384128127520038126
-
-             1759865873903109533343463983599973
-
-   d^\star = 537348303914229578514680504904642332655557132609224534787109
-
-             113866484311290252304047334217101763950152496116172075869334
-
-             3930112103298610080325764680063048
+The flag is: ``3c421da845f2837cf690ad8fa610e29a``.
 
 
 Algorithm implementation
@@ -222,3 +215,5 @@ You can find a Python implementation of the ``URE based on ElGamal`` here:
 .. include:: ./src/ure
    :code: python
    :class: highlight
+
+If you want to run the script above, also need the following files:
