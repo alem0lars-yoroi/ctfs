@@ -7,8 +7,8 @@ Writeup: SharifCTF 2016 - URE
 :lang: en
 :summary: A challenge for the cryptosystem
           *Universal Re-Encryption based on ElGamal*,
-          where I had to create a cipher-text from another
-          cipher-text.
+          where I had to create a ciphertext from another
+          ciphertext.
 
 
 Points
@@ -27,18 +27,18 @@ Let :math:`x \in \mathbb{Z}_q` be the private key, and :math:`h = g^x`
 (mod :math:`p`) be the public key.
 
 To encrypt a message :math:`m \in \mathbb{Z}_p^*`, pick two random values
-:math:`r, s \in \mathbb{Z}_q`, and compute the cipher-text as follows:
+:math:`r, s \in \mathbb{Z}_q`, and compute the ciphertext as follows:
 :math:`(a, b, c, d) = (g^r, h^r, g^s, mh^s)`.
 
-Download a valid cipher-text :math:`\sigma = (a, b, c, d)` below, and compute
-another valid cipher-text
+Download a valid ciphertext :math:`\sigma = (a, b, c, d)` below, and compute
+another valid ciphertext
 :math:`\sigma^\star = (a^\star, b^\star, c^\star, d^\star)` such that:
 
 1. :math:`\sigma` and :math:`\sigma^\star` decrypt to the same message;
 2. :math:`a \neq a^\star` and :math:`b \neq b^\star` and :math:`c \neq c^\star`
    and :math:`d \neq d^\star`.
 
-This is the cipher-text:
+This is the ciphertext:
 
 .. include:: ./data/ciphertext.txt
    :code: text
@@ -63,17 +63,17 @@ by the quadruple of algorithms: :math:`(KG, D, E, Re)`:
 - **Decryption algorithm**
   :math:`D(SK, \sigma) \rightarrow m`:
   A deterministic algorithm that takes as input a *secret key* :math:`SK`,
-  a *cipher-text* :math:`\sigma` and outputs the *original message* :math:`m`.
+  a *ciphertext* :math:`\sigma` and outputs the *original message* :math:`m`.
 - **Encryption algorithm**
   :math:`E(m, f, PK) \rightarrow \sigma`:
   A deterministic algorithm that takes as input a *message* :math:`m`,
   an *encryption factor* :math:`r`, a *public key* :math:`PK` and outputs the
-  corresponding cipher-text :math:`\sigma`.
+  corresponding ciphertext :math:`\sigma`.
 - **Re-encryption algorithm**
   :math:`Re(\sigma, r^\star) \rightarrow \sigma^\star`:
   This algorithm re-randomizes the encryption factor :math:`r^\star`,
-  applies it to the provided cipher-text :math:`\sigma`,
-  and outputs the new cipher-text :math:`\sigma^\star`.
+  applies it to the provided ciphertext :math:`\sigma`,
+  and outputs the new ciphertext :math:`\sigma^\star`.
   The re-encryption is different from the encryption because
   *it is executing without having the knowledge of the message*.
   This makes the re-encryption particularly useful in `mix networks`_
@@ -81,7 +81,7 @@ by the quadruple of algorithms: :math:`(KG, D, E, Re)`:
   (like a `Russian doll`_); but the proxies shouldn't know the message.
 
 The challenge says we shouldn't find the public key.
-Furthermore, we already know another cipher-text, but we don't know the message.
+Furthermore, we already know another ciphertext, but we don't know the message.
 
 *This tells me I need to find and use the re-encryption algorithm.*
 
@@ -106,7 +106,7 @@ Searching on the Internet, I've found the **ElGamal encryption system**.
 *The encryption and decryption functions seem to be really similar to the ones
 described in the challenge*. But that algorithm by default doesn't implement
 the 4th algorithm, i.e. the *re-encryption* algorithm which is the algorithm
-I need to use to get another cipher-text corresponding to the same original
+I need to use to get another ciphertext corresponding to the same original
 message.
 
 The *URE* algorithms implementation based on *ElGamal* is
@@ -156,7 +156,7 @@ Solution
 --------
 
 I need to choose a valid value of :math:`r^\star = (r_0^\star, r_1^\star)`
-in order to generate a cipher-text
+in order to generate a ciphertext
 :math:`\sigma^\star = (a^\star, b^\star, c^\star, d^\star)`
 compliant with the constraint:
 :math:`a \neq a^\star, b \neq b^\star, c \neq c^\star, d \neq d^\star`.
@@ -184,8 +184,8 @@ I have to remember that
                    c^\star = (c \cdot a) \text{ mod } p,
                    d^\star = (d \cdot b) \text{ mod } p)
 
-Replacing the input cipher-text :math:`\sigma` with its value,
-I get the following generated cipher-text :math:`\sigma^\star`:
+Replacing the input ciphertext :math:`\sigma` with its value,
+I get the following generated ciphertext :math:`\sigma^\star`:
 
 .. math::
 
@@ -201,7 +201,7 @@ I get the following generated cipher-text :math:`\sigma^\star`:
   d^\star = 0x669909b8c984ed22532758c8b5444a7eb60947c4b9f1aec21763c2af91ee878b\\
               a6ef55b8199a6a32f3b31336da6bfe870c20301f6f16b31079176b3947991848
 
-If you submit that cipher-text,
+If you submit that ciphertext,
 you'll get ``SharifCTF{3c421da845f2837cf690ad8fa610e29a}``.
 
 The flag is: ``3c421da845f2837cf690ad8fa610e29a``.

@@ -6,7 +6,7 @@ Writeup: SharifCTF 2016 - Rail Fence Cipher
 :category: CTF Writeups
 :lang: en
 :summary: A crypto challenge where you have to get the plain-text from a given
-          cipher-text using the *Rail Fence cipher*.
+          ciphertext using the *Rail Fence cipher*.
 
 
 Points
@@ -42,7 +42,7 @@ For example, if we have ``3`` *rails* and a message of
    . E . R . D . S . O . E . E . F . E . A . O . C .
    . . A . . . I . . . V . . . D . . . E . . . N . .
 
-Then reads off to get the cipher-text:
+Then reads off to get the ciphertext:
 
 .. code-block:: text
 
@@ -55,12 +55,12 @@ Solution
 --------
 
 The challenge name is *Rail Fence Cipher*, which gave me the insight that
-`rail fence` algorithm may be used to generate the cipher-text.
+`rail fence` algorithm may be used to generate the ciphertext.
 
 Assuming that cipher algorithm is correct, we need to find the plain-text being
-used to generate the cipher-text.
+used to generate the ciphertext.
 
-The next step is to try to decode the cipher-text for some rail sizes.
+The next step is to try to decode the ciphertext for some rail sizes.
 
 The correct rail size is: ``21`` (with offset: ``0``), which gives the
 following plain-text:
@@ -81,7 +81,7 @@ Algorithm implementation
 
 You can find a Python implementation of the ``Rail Fence cipher`` here:
 
-.. include:: ./src/rail-fence-cipher
+.. include:: ./src/rail-fence
    :code: python
    :class: highlight
 

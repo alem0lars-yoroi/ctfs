@@ -89,23 +89,23 @@ class UREEGCipherText(object):
 # ------------------------------------------------------------------------------
 # ALGORITHMS -------------------------------------------------------------------
 
-class UREEGReEncryptor(object):
+class UREEGReEncoder(object):
     def __init__(self, ciphertext, r):
         self._ciphertext = ciphertext
         self._r = r
 
     @classmethod
-    def encryptfromargs(cls, args):
-        printtitle('Performing Re-Encryption')
-        # Encrypt from command line arguments.
+    def encodefromargs(cls, args):
+        printtitle('Performing re-encoding')
+        # Encode from command line arguments.
         ciphertext = UREEGCipherText(args.a, args.b, args.c, args.d, args.p)
         r = UREEGR(args.r0, args.r1)
-        reencryptor = cls(ciphertext, r)
-        ciphertext = reencryptor.encrypt()
+        reencoder = cls(ciphertext, r)
+        ciphertext = reencoder.encode()
         printsuccess('Generated the following ciphertext:\n{}'.format(
             ciphertext.dump()))
 
-    def encrypt(self):
+    def encode(self):
         return UREEGCipherText(pow(self._ciphertext.a, self._r.r0),
                                pow(self._ciphertext.b, self._r.r0),
                                pow(self._ciphertext.c * self._ciphertext.a,
@@ -123,7 +123,7 @@ def test():
     # Build testing data structures.
     original = UREEGCipherText.fromfile('ciphertext.txt')
     expected = UREEGCipherText.fromfile('solution.txt', p=original.p)
-    computed = UREEGReEncryptor(original, UREEGR(2, 1)).encrypt()
+    computed = UREEGReEncoder(original, UREEGR(2, 1)).encode()
 
     printdebug('Expected ciphertext:\n{}'.format(expected.dump()))
     printdebug('Computed ciphertext:\n{}'.format(computed.dump()))
@@ -140,19 +140,19 @@ def test():
 if __name__ == '__main__':
     printtitle('Starting Universal Re-Encryption')
     cmdmain('ure', 'Universal Re-Encryption based on ElGamal algorithm', {
-                'reencrypt': {
-                    'handler': UREEGReEncryptor.encryptfromargs,
-                    'args': [
-                        {'name': '--a',  'required': True, 'type': autoint},
-                        {'name': '--b',  'required': True, 'type': autoint},
-                        {'name': '--c',  'required': True, 'type': autoint},
-                        {'name': '--d',  'required': True, 'type': autoint},
-                        {'name': '--p',  'required': True, 'type': autoint},
-                        {'name': '--r0', 'required': True, 'type': autoint},
-                        {'name': '--r1', 'required': True, 'type': autoint},
-                    ],
-                },
-            }, testfn=test)
+            'reencode': {
+                'handler': UREEGReEncoder.encodefromargs,
+                'args': [
+                    {'name': '--a',  'required': True, 'type': autoint},
+                    {'name': '--b',  'required': True, 'type': autoint},
+                    {'name': '--c',  'required': True, 'type': autoint},
+                    {'name': '--d',  'required': True, 'type': autoint},
+                    {'name': '--p',  'required': True, 'type': autoint},
+                    {'name': '--r0', 'required': True, 'type': autoint},
+                    {'name': '--r1', 'required': True, 'type': autoint},
+                ],
+            },
+        }, testfn=test)
 
 # ------------------------------------------------------------------------------
 # vim: set filetype=python :
