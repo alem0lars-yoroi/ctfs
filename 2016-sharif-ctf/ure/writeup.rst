@@ -109,8 +109,7 @@ the 4th algorithm, i.e. the *re-encryption* algorithm which is the algorithm
 I need to use to get another ciphertext corresponding to the same original
 message.
 
-The *URE* algorithms implementation based on *ElGamal* is
-(source `Philippe Golle`_):
+The *URE* algorithms implementation based on *ElGamal* is:
 
 - **Key generation**: :math:`KG \rightarrow (SK = x, PK = g^x)`.
   The public key is computed as :math:`PK = g^x` using the generated private
@@ -148,6 +147,8 @@ The *URE* algorithms implementation based on *ElGamal* is
   Notice that the computed
   :math:`a^\star, b^\star, c^\star, d^\star \in \mathbb{Z}_p^*`
   (their value is *mod* :math:`p`).
+
+*Source* `Philippe Golle`_.
 
 .. _`Philippe Golle`: http://crypto.stanford.edu/~pgolle
 
