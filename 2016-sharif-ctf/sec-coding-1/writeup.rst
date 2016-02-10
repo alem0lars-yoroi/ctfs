@@ -2,7 +2,7 @@ Writeup: SharifCTF 2016 - SecCoding 1
 =====================================
 
 :date: 2016-02-10
-:tags: security, ctf, sharifctf, misc
+:tags: security, ctf, sharifctf, sec-coding
 :category: CTF Writeups
 :lang: en
 :summary: A challenge where you have to analyse vulnerable source code and
