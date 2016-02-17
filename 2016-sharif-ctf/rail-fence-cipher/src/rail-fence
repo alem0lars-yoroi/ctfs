@@ -2,20 +2,21 @@
 # ------------------------------------------------------------------------------
 # IMPORTS ----------------------------------------------------------------------
 
-from shared.output import *
-from shared.main   import *
+from shared.output import (print_title, print_debug, print_success, print_error,
+                           colorize, BLUE, YELLOW, CYAN)
+from shared.main   import main_with_cmds, arg_autoint
 
 # ------------------------------------------------------------------------------
 # ALGORITHMS -------------------------------------------------------------------
 
 class RailFenceCipher(object):
-    def __init__(self, railsize):
-        self._railsize = railsize
+    def __init__(self, rail_size):
+        self._rail_size = rail_size
 
     def _fence(self, lst):
-        fence = [[None] * len(lst) for n in range(self._railsize)]
-        rails = (list(range(self._railsize - 1)) +
-                 list(range(self._railsize - 1, 0, -1)))
+        fence = [[None] * len(lst) for n in range(self._rail_size)]
+        rails = (list(range(self._rail_size - 1)) +
+                 list(range(self._rail_size - 1, 0, -1)))
         for n, x in enumerate(lst):
             fence[rails[n % len(rails)]][n] = x
 
@@ -28,53 +29,51 @@ class RailFenceCipher(object):
                 else:
                     rail_data.append(colorize(str(c), BLUE))
             fence_str += ''.join(rail_data) + '\n'
-        printdebug('Building rail fence\n{}'.format(fence_str))
+        print_debug('Building rail fence\n{}'.format(fence_str))
 
         return [c for rail in fence for c in rail if c is not None]
 
 class RailFenceEncoder(RailFenceCipher):
-    def __init__(self, plaintext, railsize):
-        super(RailFenceEncoder, self).__init__(railsize)
+    def __init__(self, plaintext, rail_size):
+        super(RailFenceEncoder, self).__init__(rail_size)
         self._plaintext = plaintext
 
     @classmethod
     def encodefromargs(cls, args):
-        printtitle('Performing encoding')
+        print_title('Performing encoding')
         # Encode from command line arguments.
-        for plaintext in args.plaintext:
-            encoder = cls(plaintext, args.railsize)
+        for plaintext in args.PLAINTEXT:
+            encoder = cls(plaintext, args.rail_size)
             ciphertext = encoder.encode()
-            printsuccess('{}\nhas been encoded to:\n{}'.format(
-                hex(plaintext), ciphertext.dump()))
 
     def encode(self):
-        printtitle('Encoding plaintext..')
+        print_title('Encoding plaintext: {}'.format(
+                    colorize(self._plaintext, CYAN)))
         ciphertext = ''.join(self._fence(self._plaintext))
-        printsuccess('Encoded plaintext into: {ciphertext}'.format(
+        print_success('Encoded plaintext into: {ciphertext}'.format(
                      ciphertext=colorize(ciphertext, CYAN)))
         return ciphertext
 
 class RailFenceDecoder(RailFenceCipher):
-    def __init__(self, ciphertext, railsize):
-        super(RailFenceDecoder, self).__init__(railsize)
+    def __init__(self, ciphertext, rail_size):
+        super(RailFenceDecoder, self).__init__(rail_size)
         self._ciphertext = ciphertext
 
     @classmethod
     def decodefromargs(cls, args):
-        printtitle('Performing decoding')
+        print_title('Performing decoding')
         # Encode from command line arguments.
-        for ciphertext in args.ciphertext:
-            decoder = cls(ciphertext, args.railsize)
+        for ciphertext in args.CIPHERTEXT:
+            decoder = cls(ciphertext, args.rail_size)
             ciphertext = decoder.decode()
-            printsuccess('{}\nhas been decoded to:\n{}'.format(
-                hex(ciphertext), plaintext))
 
     def decode(self):
-        printtitle('Decoding ciphertext..')
+        print_title('Decoding ciphertext: {}'.format(
+                    colorize(self._ciphertext, CYAN)))
         rng = range(len(self._ciphertext))
         positions = self._fence(rng)
         plaintext = ''.join(self._ciphertext[positions.index(n)] for n in rng)
-        printsuccess('Decoded ciphertext into: {plaintext}'.format(
+        print_success('Decoded ciphertext into: {plaintext}'.format(
                      plaintext=colorize(plaintext, CYAN)))
         return plaintext
 
@@ -82,36 +81,40 @@ class RailFenceDecoder(RailFenceCipher):
 # TEST FUNCTIONS ---------------------------------------------------------------
 
 def test():
-    printtitle('Testing Fence Cipher encode/decode functions..')
+    print_title('Testing Fence Cipher encode/decode functions..')
 
-    railsize = 21
+    rail_size = 21
     plaintext  = ('A-fence-is-a-structure-that-encloses-an-area,-SharifCTF'
                   '{QmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJt},-typically-outdoors.')
     ciphertext = ('AaY--rpyfneJBeaaX0n-,ZZcs-uXeeSVJ-sh2tioaZ}slrg,-ciE-an'
                   'fGt.-eCIyss-TzprttFliora{GcouhQIadctm0ltt-FYluuezTyorZ-')
 
-    decoded = RailFenceDecoder(ciphertext, railsize).decode()
+    decoded = RailFenceDecoder(ciphertext, rail_size).decode()
     if plaintext == decoded:
-        printsuccess('Decode success: plaintext == decoded')
+        print_success('Decode success: {}'.format(
+                      colorize('plaintext == decoded', CYAN)))
     else:
-        printerror('Decode failed: plaintext != decoded')
+        print_error('Decode failed: {}'.format(
+                    colorize('plaintext != decoded', CYAN)))
 
-    encoded = RailFenceEncoder(plaintext, railsize).encode()
+    encoded = RailFenceEncoder(plaintext, rail_size).encode()
     if ciphertext == encoded:
-        printsuccess('Encode success: ciphertext == encoded')
+        print_success('Encode success: {}'.format(
+                      colorize('ciphertext == encoded', CYAN)))
     else:
-        printerror('Encode failed: ciphertext != encoded')
+        print_error('Encode failed: {}'.format(
+                    colorize('ciphertext != encoded', CYAN)))
 
 # ------------------------------------------------------------------------------
 # ENTRY POINT ------------------------------------------------------------------
 
 if __name__ == '__main__':
-    printtitle('Starting Rail Fence')
-    cmdmain('rail-fence', 'Rail Fence algorithm', {
+    print_title('Starting Rail Fence')
+    main_with_cmds('rail-fence', 'Rail Fence algorithm', {
             'encode': {
                 'handler': RailFenceEncoder.encodefromargs,
                 'args': [{
-                    'name': '--railsize', 'required': True, 'type': autoint,
+                    'name': '--rail-size', 'required': True, 'type': arg_autoint,
                     'help': 'The rail size (number of rows)',
                 }, {
                     'name': 'PLAINTEXT', 'nargs': '+',
@@ -121,7 +124,7 @@ if __name__ == '__main__':
             'decode': {
                 'handler': RailFenceDecoder.decodefromargs,
                 'args': [{
-                    'name': '--railsize', 'required': True, 'type': autoint,
+                    'name': '--rail-size', 'required': True, 'type': arg_autoint,
                     'help': 'The rail size (number of rows)',
                 }, {
                     'name': 'CIPHERTEXT', 'nargs': '+',

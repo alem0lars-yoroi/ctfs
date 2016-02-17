@@ -2,10 +2,15 @@
 # ------------------------------------------------------------------------------
 # IMPORTS ----------------------------------------------------------------------
 
-import os, re
-from shared.output import *
-from shared.files  import *
-from shared.main   import *
+from os.path import (join     as join_path,
+                     dirname  as dir_name,
+                     realpath as real_path)
+from re      import  compile  as compile_regexp
+
+from shared.output import (print_title, print_success, print_debug, colorize,
+                           WHITE, CYAN)
+from shared.files  import  parse_from_regexp
+from shared.main   import  main_with_cmds, arg_autoint
 
 # ------------------------------------------------------------------------------
 # DATA STRUCTURES --------------------------------------------------------------
@@ -30,13 +35,12 @@ class UREEGCipherText(object):
         self.d = d
 
     @classmethod
-    def fromfile(cls, filename, p=None):
-        path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
-                            'data', filename)
-        args = parsefromregexp(
+    def fromfile(cls, file_name, p=None):
+        path = join_path(dir_name(dir_name(real_path(__file__))), 'data', file_name)
+        args = parse_from_regexp(
             path,
             ['a', 'b', 'c', 'd', 'p'],
-            lambda name: re.compile('^{}\\s*=\\s*0x(.+)$'.format(name)),
+            lambda name: compile_regexp('^{}\\s*=\\s*0x(.+)$'.format(name)),
             lambda md: int(md.group(1), 16))
         if not p is None and not 'p' in args:
             args['p'] = p
@@ -95,14 +99,14 @@ class UREEGReEncoder(object):
         self._r = r
 
     @classmethod
-    def encodefromargs(cls, args):
-        printtitle('Performing re-encoding')
+    def encode_from_args(cls, args):
+        print_title('Performing re-encoding')
         # Encode from command line arguments.
         ciphertext = UREEGCipherText(args.a, args.b, args.c, args.d, args.p)
         r = UREEGR(args.r0, args.r1)
-        reencoder = cls(ciphertext, r)
-        ciphertext = reencoder.encode()
-        printsuccess('Generated the following ciphertext:\n{}'.format(
+        re_encoder = cls(ciphertext, r)
+        ciphertext = re_encoder.encode()
+        print_success('Generated the following ciphertext:\n{}'.format(
             ciphertext.dump()))
 
     def encode(self):
@@ -118,38 +122,38 @@ class UREEGReEncoder(object):
 # TEST FUNCTIONS ---------------------------------------------------------------
 
 def test():
-    printtitle('Testing')
+    print_title('Testing')
 
     # Build testing data structures.
     original = UREEGCipherText.fromfile('ciphertext.txt')
     expected = UREEGCipherText.fromfile('solution.txt', p=original.p)
     computed = UREEGReEncoder(original, UREEGR(2, 1)).encode()
 
-    printdebug('Expected ciphertext:\n{}'.format(expected.dump()))
-    printdebug('Computed ciphertext:\n{}'.format(computed.dump()))
+    print_debug('Expected ciphertext:\n{}'.format(expected.dump()))
+    print_debug('Computed ciphertext:\n{}'.format(computed.dump()))
 
     if computed == expected:
-        printsuccess('The computed ciphertext is the same of the expected')
+        print_success('The computed ciphertext is the same of the expected')
     else:
-        printsuccess('The computed ciphertext is NOT the same of the expected')
+        print_success('The computed ciphertext is NOT the same of the expected')
         return -1
 
 # ------------------------------------------------------------------------------
 # ENTRY POINT ------------------------------------------------------------------
 
 if __name__ == '__main__':
-    printtitle('Starting Universal Re-Encryption')
-    cmdmain('ure', 'Universal Re-Encryption based on ElGamal algorithm', {
+    print_title('Starting Universal Re-Encryption')
+    main_with_cmds('ure', 'Universal Re-Encryption based on ElGamal algorithm', {
             'reencode': {
-                'handler': UREEGReEncoder.encodefromargs,
+                'handler': UREEGReEncoder.encode_from_args,
                 'args': [
-                    {'name': '--a',  'required': True, 'type': autoint},
-                    {'name': '--b',  'required': True, 'type': autoint},
-                    {'name': '--c',  'required': True, 'type': autoint},
-                    {'name': '--d',  'required': True, 'type': autoint},
-                    {'name': '--p',  'required': True, 'type': autoint},
-                    {'name': '--r0', 'required': True, 'type': autoint},
-                    {'name': '--r1', 'required': True, 'type': autoint},
+                    {'name': '--a',  'required': True, 'type': arg_autoint},
+                    {'name': '--b',  'required': True, 'type': arg_autoint},
+                    {'name': '--c',  'required': True, 'type': arg_autoint},
+                    {'name': '--d',  'required': True, 'type': arg_autoint},
+                    {'name': '--p',  'required': True, 'type': arg_autoint},
+                    {'name': '--r0', 'required': True, 'type': arg_autoint},
+                    {'name': '--r1', 'required': True, 'type': arg_autoint},
                 ],
             },
         }, testfn=test)
