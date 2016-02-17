@@ -1,2 +1,6 @@
+# Python bytecode.
 /shared/__pycache__/
 **/*.pyc
+
+# VirtualEnv.
+/.venv
