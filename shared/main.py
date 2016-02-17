@@ -1,69 +1,72 @@
 # IMPORTS ----------------------------------------------------------------------
 
-import argparse, ast, collections, sys
-from shared.output import *
+import sys
+from collections   import OrderedDict
+from ast           import literal_eval
+from argparse      import ArgumentParser
+from shared.output import print_error, enable_verbose
 
 # ------------------------------------------------------------------------------
 # MODULE INFORMATIONS ----------------------------------------------------------
 
-__all__ = [
-    'cmdmain', 'autoint'
-]
+__all__ = ['main_with_cmds', 'arg_autoint', 'arg_literal']
 
 # ------------------------------------------------------------------------------
 # CUSTOM ARGUMENTS -------------------------------------------------------------
 
-def literal(x):
-    return ast.literal_eval(x)
-
-def autoint(x):
+def arg_autoint(x):
     return int(x, 0)
+
+def arg_literal(x):
+    return literal_eval(x)
 
 # ------------------------------------------------------------------------------
 # MAIN POLICIES ----------------------------------------------------------------
 
-def cmdmain(prog, desc, cmds, testfn=None, automaticindent=True):
-    parser = argparse.ArgumentParser(prog=prog, description=desc)
+def main_with_cmds(prog, desc, cmds, testfn=None):
+    parser = ArgumentParser(prog=prog, description=desc)
     parser.add_argument('--verbose', '-v', action='store_true',
             help='Enable verbose output')
-    subparsers = parser.add_subparsers(title='subcommands', dest='parsername')
+    subparsers = parser.add_subparsers(title='subcommands', dest='parser_name')
 
     # Parser for the test command.
     if testfn:
         parser_test = subparsers.add_parser('test', help='Run tests')
 
     # Parser for the sub-commands.
-    for cmdname, cmdinfo in cmds.items():
-        cmdparser = subparsers.add_parser(cmdname,
-                help='Execute the command: {}'.format(cmdname))
-        if isinstance(cmdinfo, dict) and 'args' in cmdinfo:
-            args = collections.OrderedDict()
-            for arginfo in cmdinfo['args']:
-                name = arginfo.pop('name')
-                args[name] = arginfo
-            for argname, argparams in args.items():
-                cmdparser.add_argument(argname, **argparams)
+    for cmd_name, cmd_info in cmds.items():
+        cmd_parser = subparsers.add_parser(cmd_name,
+                help='Execute the command: {}'.format(cmd_name))
+        if isinstance(cmd_info, dict) and 'args' in cmd_info:
+            args = OrderedDict()
+            for arg_info in cmd_info['args']:
+                name = arg_info.pop('name')
+                args[name] = arg_info
+            for arg_name, arg_params in args.items():
+                cmd_parser.add_argument(arg_name, **arg_params)
 
     # Parse arguments.
     args = parser.parse_args(sys.argv[1:])
 
-    setupoutput(verbose=args.verbose, automaticindent=automaticindent)
+    if args.verbose:
+        enable_verbose()
 
     # Call the right sub-command handler.
     status = None
-    if args.parsername is None:
-        printerror('You need to specify the command (see --help)')
-    elif args.parsername == 'test':
+    if args.parser_name is None:
+        print_error('You need to specify the command (see --help)')
+    elif args.parser_name == 'test':
         status = testfn()
     else:
-        for cmdname, cmdinfo in cmds.items():
-            if args.parsername == cmdname:
-                if isinstance(cmdinfo, dict) and 'handler' in cmdinfo:
-                    status = cmdinfo['handler'](args)
-                elif hasattr(cmdinfo, '__call__'):
-                    status = cmdinfo(args)
+        for cmd_name, cmd_info in cmds.items():
+            if args.parser_name == cmd_name:
+                if isinstance(cmd_info, dict) and 'handler' in cmd_info:
+                    status = cmd_info['handler'](args)
+                elif hasattr(cmd_info, '__call__'):
+                    status = cmd_info(args)
                 else:
-                    printerror('Invalid info for command: {}'.format(cmdname))
+                    print_error('Invalid informations for command: {}'.format(
+                        cmd_name))
                     status = -999
 
     # Exit from the program with the status-code relative to the command exit

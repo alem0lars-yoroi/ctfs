@@ -1,13 +1,12 @@
 # ------------------------------------------------------------------------------
 # MODULE INFORMATIONS ----------------------------------------------------------
 
-__all__ = ['parsefromregexp']
-
+__all__ = ['parse_from_regexp']
 
 # ------------------------------------------------------------------------------
 # PARSERS ----------------------------------------------------------------------
 
-def parsefromregexp(path, names, regexp, extractor):
+def parse_from_regexp(path, names, regexp, extractor):
     regexps = {name: regexp(name) for name in names}
     values = {}
     with open(path) as f:
